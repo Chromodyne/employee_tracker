@@ -3,7 +3,6 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const console = require("console");
 const util = require("util");
-const { lstat } = require("fs");
 
 //Create the connection from mysql2 to the database.
 const dbConfig = {
@@ -18,6 +17,7 @@ const connection = mysql.createConnection(dbConfig);
 //Promisify queries so that it's completed prior to later logic.
 const query = util.promisify(connection.query).bind(connection);
 
+//This array contains the list of choices the user can choose to perform on the database.
 const dbActions = [
     "View all departments.",
     "View all roles.",
@@ -28,6 +28,7 @@ const dbActions = [
     "Update an employee role."
 ];
 
+//Gets user input for database actions.
 function getInput() {
     inquirer.prompt([
         {
@@ -48,42 +49,40 @@ function performActions(choice) {
 
         //View all departments.
         case dbActions[0]:
-            console.log("Choice 0 selected.")
+            console.log("Departments:")
             queryDepartments();
             break;
 
         //View all roles.
         case dbActions[1]:
-            console.log("Choice 1 selected.")
+            console.log("Roles:")
             queryRoles();
             break;
 
         //View all employees.
         case dbActions[2]:
-            console.log("Choice 2 selected.");
+            console.log("Employees:");
             queryEmployees();
             break;
 
         //Add a department.
         case dbActions[3]:
-            console.log("Choice 3 selected.")
             addDepartment();
             break;
 
         //Add a role.
         case dbActions[4]:
-            console.log("Choice 4 selected.")
             addRole();
             break;
         
         //Add an employee.
         case dbActions[5]:
-            console.log("Choice 5 selected.")
+            addEmployee();
             break;
         
         //Update an employee role.
         case dbActions[6]:
-            console.log("Choice 6 selected.")
+            updateRole();
             break;
 
         default:
@@ -134,6 +133,7 @@ function addDepartment() {
         console.log("Insertion procedure started.");
         connection.query("INSERT INTO department (name) VALUES (?)", [response.department]);
         console.log("Insertion procedure completed.");
+        getInput();
 
     })
 }
@@ -154,17 +154,18 @@ function addRole() {
             name: "salary"
         },
         {
-            type: "input",
+            type: "list",
             message: "What department is this role considered under?",
-            //choices: ["Sales", "Support", "Human Resources", "Financial"],      //TODO: DO NOT HARDCODE THIS. GET THE LIST OF CURRENT ROLES IN THE DATABASE.
+            choices: ["Sales", "Support", "Human Resources", "Financial"],
             name: "department"
-            //TODO: Consider using a list of departments that already exist to prevent user error.
         }
     ]).then( (response) => {
         //TODO: Put in logic for changing text for role into a number.
 
         connection.query("INSERT INTO role(title, salary, department_id) VALUES (?,?,?)", [response.title, response.salary, response.department]);
+        connection.
         console.log("Role added successfully.");
+        getInput();
     }
     );
 
@@ -181,21 +182,23 @@ function addEmployee() {
         {
             type: "input",
             message: "What is the employee's last name?",
-            name: last
+            name: "last"
         },
         {
             type: "input",
             message: "What is the employee's role?",
-            name: "title"
+            name: "role_id"
         },
         {
             type: "input",
-            message: "Who is the employee's manager? (Null if none.)",
+            message: "Who is the employee's manager? (Use ID. Null if none.)",
             name: "manager"
         }
 
     ]).then((response) => {
         //TODO: Logic goes here.
+        connection.query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)", [response.first_name, response.last_name, response.role_id, response.manager]);
+        console.log("Employee added successfully.");
     })
 
 }

@@ -200,6 +200,25 @@ function addEmployee() {
 
 }
 
+function updateRole() {
+
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Which employee would you like to update?",
+            name: "employee"
+        },
+        {
+            type: "input",
+            message: "What is their new role?",
+            name: "newRole"
+        }
+    ]).then((response) => {
+        //TODO: LOGIC GOES HERE.
+    })
+
+}
+
 //Get user input on run.
 getInput();
 

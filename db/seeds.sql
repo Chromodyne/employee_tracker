@@ -12,11 +12,14 @@ VALUES  (001, "Executive", 80000, 001),
         (005, "HR Lead", 50000, 003),
         (006, "HR Tech", 40000, 003),
         (007, "CFO", 95000, 004),
-        (008, "Comptroller",  80000, 004)
+        (008, "Comptroller",  80000, 004);
 
 INSERT INTO employee (id, first_name, last_name, role_id, manager_id)
 VALUES  (001, "Michael", "Ginsberg", 001, null),
         (002, "Kaitlyn", "Moroe", 002, 001),
         (003, "James", "Schmidt", 003, 001),
         (004, "Ricky", "Bobby", 004, 003),
-        
+        (005, "Janice", "Holmes", 005, 001),
+        (006, "Jerry", "Portlin", 006, 005),
+        (007, "Oscar", "Hernandez", 007, null),
+        (008, "Lane", "Pryce", 008, 007) ;

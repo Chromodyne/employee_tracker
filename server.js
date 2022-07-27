@@ -1,6 +1,18 @@
+//Imports
 const inquirer = require("inquirer");
-const mysql2 = require("mysql2"); 
+const mysql = require("mysql2");
 const console = require("console");
+const util = require("util");
+
+//Create the connection from mysql2 to the database.
+const dbConfig = {
+    host: "localhost",
+    user: "root",
+    password: "2zQTR33vX!",
+    database: "employees_db"
+};
+
+const connection = mysql.createConnection(dbConfig);
 
 const dbActions = [
     "View all departments.",
@@ -34,16 +46,19 @@ function performActions(choice) {
         //View all departments.
         case dbActions[0]:
             console.log("Choice 0 selected.")
+            queryDepartments();
             break;
 
         //View all roles.
         case dbActions[1]:
             console.log("Choice 1 selected.")
+            queryRoles();
             break;
 
         //View all employees.
         case dbActions[2]:
-            console.log("Choice 2 selected.")
+            console.log("Choice 2 selected.");
+            queryEmployees();
             break;
 
         //Add a department.
@@ -70,6 +85,28 @@ function performActions(choice) {
             console.error("Invalid case detected for action.");
             break;
     }
-}   
+}
+
+//Queries the department table to display it.
+//TODO: Make these return user control after displaying the table.
+function queryDepartments() {
+    connection.query( "SELECT * FROM department", (err, results, fields) => {
+        console.table(results);
+    });
+}
+
+//Queries the role table to display it.
+function queryRoles() {
+    connection.query("SELECT * FROM role", (err, results, fields) => {
+        console.table(results);
+    })
+}
+
+function queryEmployees() {
+    connection.query("SELECT * FROM employee", (err, results, fields) => {
+        console.table(results);
+    })
+}
+
 
 getInput();

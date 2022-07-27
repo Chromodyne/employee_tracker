@@ -3,7 +3,7 @@ const inquirer = require("inquirer");
 const mysql = require("mysql2");
 const console = require("console");
 const util = require("util");
-const { connect } = require("http2");
+const { lstat } = require("fs");
 
 //Create the connection from mysql2 to the database.
 const dbConfig = {
@@ -41,7 +41,7 @@ function getInput() {
     })
 }
 
-//TODO: This function will begin the logic based on the choice the user made.
+//This function determines the functions to invoke based on the user's choice of action.
 function performActions(choice) {
 
     switch(choice.action) {
@@ -101,6 +101,7 @@ async function queryDepartments() {
         getInput();
     }
 }
+
 //Queries the role table to display it. Promisified to make sure table displays before getting input.
 async function queryRoles() {
     try {
@@ -133,7 +134,7 @@ function addDepartment() {
         console.log("Insertion procedure started.");
         connection.query("INSERT INTO department (name) VALUES (?)", [response.department]);
         console.log("Insertion procedure completed.");
-        
+
     })
 }
 
@@ -145,7 +146,7 @@ function addRole() {
         {
             type: "input",
             message: "What role would you like to add?",
-            name: "role"
+            name: "title"
         },
         {
             type: "input",
@@ -155,18 +156,50 @@ function addRole() {
         {
             type: "input",
             message: "What department is this role considered under?",
+            //choices: ["Sales", "Support", "Human Resources", "Financial"],      //TODO: DO NOT HARDCODE THIS. GET THE LIST OF CURRENT ROLES IN THE DATABASE.
             name: "department"
+            //TODO: Consider using a list of departments that already exist to prevent user error.
         }
-    ]).then(
-        connection.query("INSERT INTO role(id, title, salary, department_id) VALUES")
+    ]).then( (response) => {
+        //TODO: Put in logic for changing text for role into a number.
+
+        connection.query("INSERT INTO role(title, salary, department_id) VALUES (?,?,?)", [response.title, response.salary, response.department]);
+        console.log("Role added successfully.");
+    }
     );
 
 }
 
-function insertData(response) {
-    console.log("Insertion procedure started.");
-    console.log("Insertion procedure completed.")
+function addEmployee() {
+
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "What is the employee's first name?",
+            name: "first"
+        },
+        {
+            type: "input",
+            message: "What is the employee's last name?",
+            name: last
+        },
+        {
+            type: "input",
+            message: "What is the employee's role?",
+            name: "title"
+        },
+        {
+            type: "input",
+            message: "Who is the employee's manager? (Null if none.)",
+            name: "manager"
+        }
+
+    ]).then((response) => {
+        //TODO: Logic goes here.
+    })
+
 }
 
 //Get user input on run.
 getInput();
+

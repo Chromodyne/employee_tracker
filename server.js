@@ -104,8 +104,9 @@ async function queryDepartments() {
 //Queries the role table to display it. Promisified to make sure table displays before getting input.
 async function queryRoles() {
     try {
-        let rows = await query("SELECT * FROM role");
-        console.table(rows);
+        //let rows = await query("SELECT * FROM role");
+        let modified = await query("SELECT role.id, role.title, role.salary, role.department_id, department.name FROM role INNER JOIN department ON role.department_id = department.id")
+        console.table(modified);
     } finally {
         getInput();
     }
@@ -114,8 +115,10 @@ async function queryRoles() {
 //Queries the employee table and display it. Promisified to make sure table displays before getting input.
 async function queryEmployees() {
     try {
-        let rows = await query("SELECT * FROM employee");
-        console.table(rows);
+        //let rows = await query("SELECT * FROM employee");
+        let modified = await query("SELECT * FROM employee LEFT JOIN role LEFT JOIN department ON role.department_id = department.id ON employee.role_id = role.id");
+        //let mod2 = await query("ALTER TABLE (?) ADD COLUMN manager VARCHAR(30) AFTER manager_id", [modified]);
+        console.table(modified);
     } finally {
         getInput();
     }

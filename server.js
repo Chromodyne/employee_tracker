@@ -154,23 +154,20 @@ function addRole() {
             name: "salary"
         },
         {
-            type: "list",
-            message: "What department is this role considered under?",
-            choices: ["Sales", "Support", "Human Resources", "Financial"],
+            type: "input",
+            message: "What department is this role considered under? (Use the role's ID.)",
             name: "department"
         }
     ]).then( (response) => {
-        //TODO: Put in logic for changing text for role into a number.
 
         connection.query("INSERT INTO role(title, salary, department_id) VALUES (?,?,?)", [response.title, response.salary, response.department]);
-        connection.
         console.log("Role added successfully.");
         getInput();
-    }
-    );
+    });
 
 }
 
+//This function holds the logic for adding employees to the database.
 function addEmployee() {
 
     inquirer.prompt([
@@ -191,33 +188,40 @@ function addEmployee() {
         },
         {
             type: "input",
-            message: "Who is the employee's manager? (Use ID. Null if none.)",
+            message: "Who is the employee's manager? (Use the manager's ID. Leave blank if none.)",
             name: "manager"
         }
 
     ]).then((response) => {
-        //TODO: Logic goes here.
-        connection.query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)", [response.first_name, response.last_name, response.role_id, response.manager]);
+        
+        //Check if the manager ID is an empty string or a string of NULL and sets it to value null.
+        if (response.manager == "NULL" || response.manager == "") {
+            response.manager = null;
+        }
+        connection.query("INSERT INTO employee(first_name, last_name, role_id, manager_id) VALUES (?,?,?,?)", [response.first, response.last, response.role_id, response.manager]);
         console.log("Employee added successfully.");
+        getInput();
     })
 
 }
 
+//Updates the employee's selected role.
 function updateRole() {
 
     inquirer.prompt([
         {
             type: "input",
-            message: "Which employee would you like to update?",
-            name: "employee"
+            message: "Which employee would you like to update? (Use their ID.)",
+            name: "employeeId"
         },
         {
             type: "input",
-            message: "What is their new role?",
+            message: "What is the new employee's role? (Use the role's ID.)",
             name: "newRole"
         }
     ]).then((response) => {
-        //TODO: LOGIC GOES HERE.
+        connection.query("UPDATE employee SET role_id = ? WHERE id = ?", [response.newRole, response.employeeId]);
+        getInput();
     })
 
 }

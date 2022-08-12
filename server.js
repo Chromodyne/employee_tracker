@@ -115,7 +115,6 @@ async function queryRoles() {
 //Queries the employee table and display it. Promisified to make sure table displays before getting input.
 async function queryEmployees() {
     try {
-        //let rows = await query("SELECT * FROM employee");
         let modified = await query("SELECT * FROM employee LEFT JOIN role LEFT JOIN department ON role.department_id = department.id ON employee.role_id = role.id");
         //let mod2 = await query("ALTER TABLE (?) ADD COLUMN manager VARCHAR(30) AFTER manager_id", [modified]);
         console.table(modified);
